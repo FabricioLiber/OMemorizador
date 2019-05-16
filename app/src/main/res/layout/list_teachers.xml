@@ -9,7 +9,7 @@
             android:id="@+id/list_teachers_imagem"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="10sp"/>
+            android:layout_margin="3sp"/>
 
     <LinearLayout
             android:layout_width="match_parent"

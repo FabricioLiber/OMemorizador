@@ -23,7 +23,12 @@ class Teacher: Comparable<Teacher>, Cloneable {
         return this.nome.compareTo(other.nome)
     }
 
-    override fun clone(): Any {
+    override fun clone(): Teacher {
         return super.clone() as Teacher
     }
+
+    fun clonePublic(): Teacher {
+        return clone()
+    }
+
 }

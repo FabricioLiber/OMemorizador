@@ -19,6 +19,7 @@ import retrofit2.Callback
 class MainActivity : AppCompatActivity() {
 
     private lateinit var btListar: Button
+    private lateinit var btJogar: Button
     private lateinit var tvStatus: TextView
     private var teachers = ArrayList<Teacher>()
     private var page = 1
@@ -30,18 +31,45 @@ class MainActivity : AppCompatActivity() {
         readAllTeachers()
 
         this.btListar = findViewById(R.id.btListar)
+        this.btJogar = findViewById(R.id.btJogar)
         this.tvStatus = findViewById(R.id.tvStatus)
         this.tvStatus.text = "O app está processando os dados"
 
         this.btListar.setOnClickListener{ listarProfessores(it) }
+        this.btJogar.setOnClickListener { abrirJogo(it) }
 
     }
 
     fun listarProfessores(v: View) {
         var intent = Intent(this, ListActivity::class.java)
+
+        intent.putExtra("teachers", converterLista(this.teachers))
+        startActivity(intent)
+    }
+
+    fun converterLista(lista: List<Teacher>): String {
         val gson = Gson()
-        val jsonTeachers = gson.toJson(this.teachers)
-        intent.putExtra("teachers", jsonTeachers)
+        return gson.toJson(lista)
+    }
+
+    fun clonarListaAleatoria (lista: List<Teacher>): ArrayList<Teacher> {
+        var listaClonada = ArrayList<Teacher>()
+        for (t in lista)
+            listaClonada.add(t.clonePublic())
+        return listaClonada
+
+    }
+
+    fun abrirJogo(v: View) {
+        val listaAleatoria: ArrayList<Teacher> = clonarListaAleatoria(this.teachers)
+        listaAleatoria.shuffle()
+        val slice = listaAleatoria.subList(0,8)
+        slice.addAll(slice)
+        slice.shuffle()
+
+        var intent = Intent(this, TabuleiroActivity::class.java)
+
+        intent.putExtra("teachers", converterLista(slice))
         startActivity(intent)
     }
 
