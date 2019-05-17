@@ -40,20 +40,13 @@ class GridTeachersAdapter: BaseAdapter {
         var view = activity.layoutInflater.inflate(R.layout.list_teachers, parent, false)
         val teacher: Teacher = this.teachers.get(position)
 
-//        var nome = view.findViewById<TextView>(R.id.list_teachers_nome)
-//        var fraseMarcante = view.findViewById<TextView>(R.id.list_teachers_frasemarcante)
         var foto = view.findViewById<ImageView>(R.id.list_teachers_imagem)
 
-//        nome.text = teacher.nome
-//        var frase = ""
-//        if (!teacher.frasemarcante.equals(""))
-//            frase = "\" ${teacher.frasemarcante} \""
-//        fraseMarcante.text = frase
-
         Picasso.with(context)
-            .load(teacher.foto)
+            .load("https://res.cloudinary.com/deqmrmqui/image/upload/v1558056566/icognita_rvba83.jpg")
             .into(foto)
-        return view
+
+        return foto
 
     }
 
