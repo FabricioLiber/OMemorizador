@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var btListar: Button
     private lateinit var btJogar: Button
+    private lateinit var btListarRecorde: Button
     private lateinit var tvStatus: TextView
     private var teachers = ArrayList<Teacher>()
     private var page = 1
@@ -37,13 +38,24 @@ class MainActivity : AppCompatActivity() {
 
         this.btListar = findViewById(R.id.btListar)
         this.btJogar = findViewById(R.id.btJogar)
+        this.btListarRecorde = findViewById(R.id.btListarRecorde)
         this.tvStatus = findViewById(R.id.tvStatus)
         this.tvStatus.text = "O app está processando os dados"
         this.recordeDAO = RecordeDAO(this)
 
         this.btListar.setOnClickListener{ listarProfessores(it) }
         this.btJogar.setOnClickListener { abrirJogo(it) }
+        this.btListar.setOnClickListener{ listarRecordes(it) }
 
+    }
+
+    fun listarRecordes(v: View) {
+        var intent = Intent(this, ListRecordeActivity::class.java)
+
+        val gson = Gson()
+        intent.putExtra("recordes", gson.toJson(this.recordeDAO.read()))
+
+        startActivity(intent)
     }
 
     fun listarProfessores(v: View) {
