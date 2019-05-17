@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         this.btListar.setOnClickListener{ listarProfessores(it) }
         this.btJogar.setOnClickListener { abrirJogo(it) }
-        this.btListar.setOnClickListener{ listarRecordes(it) }
+        this.btListarRecorde.setOnClickListener{ listarRecordes(it) }
 
     }
 
@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.i("APP_API", "Entrou antes do resultOk")
         if (resultCode == Activity.RESULT_OK){
             if (requestCode == TABULEIRO) {
                 Log.i("APP_API", "Entrou")

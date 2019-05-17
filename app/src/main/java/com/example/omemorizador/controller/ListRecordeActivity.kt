@@ -2,6 +2,7 @@ package com.example.omemorizador.controller
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.example.omemorizador.R
 import com.example.omemorizador.model.Recorde
@@ -22,7 +23,8 @@ class ListRecordeActivity : AppCompatActivity() {
         val recordes: List<Recorde> = gson.fromJson(intent.getStringExtra("Recordes"), type)
 
         this.lvRecordes = findViewById(R.id.lvRecorde)
-        this.lvRecordes.adapter = 
+        this.lvRecordes.adapter = ArrayAdapter<Recorde>(this, android.R.layout.simple_list_item_1, recordes)
+
 
     }
 }
