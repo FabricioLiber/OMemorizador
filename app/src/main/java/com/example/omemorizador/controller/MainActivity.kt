@@ -1,5 +1,6 @@
 package com.example.omemorizador.controller
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,7 +8,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import com.example.oagendador.RecordeDAO
 import com.example.omemorizador.R
+import com.example.omemorizador.model.Recorde
 import com.example.omemorizador.retrofit.RetrofitInitializer
 import com.example.omemorizador.model.ResponseAPI
 import com.example.omemorizador.model.Teacher
@@ -23,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private var teachers = ArrayList<Teacher>()
     private var page = 1
+    private val TABULEIRO = 1
+    private lateinit var recordeDAO: RecordeDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         this.btJogar = findViewById(R.id.btJogar)
         this.tvStatus = findViewById(R.id.tvStatus)
         this.tvStatus.text = "O app está processando os dados"
+        this.recordeDAO = RecordeDAO(this)
 
         this.btListar.setOnClickListener{ listarProfessores(it) }
         this.btJogar.setOnClickListener { abrirJogo(it) }
@@ -44,7 +50,22 @@ class MainActivity : AppCompatActivity() {
         var intent = Intent(this, ListActivity::class.java)
 
         intent.putExtra("teachers", converterLista(this.teachers))
-        startActivity(intent)
+
+        startActivityForResult(intent, TABULEIRO)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK){
+            if (requestCode == TABULEIRO) {
+                Log.i("APP_API", "Entrou")
+                this.recordeDAO.create(data?.getSerializableExtra("recorde") as Recorde)
+                for (recorde in this.recordeDAO.read())
+                    Log.i("APP_API", recorde.toString())
+            }
+        }else{
+            Log.i("APP_OCHAMADOR", "Partida Cancelada!")
+        }
     }
 
     fun converterLista(lista: List<Teacher>): String {

@@ -1,6 +1,10 @@
 package com.example.omemorizador.controller
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
@@ -9,10 +13,16 @@ import android.view.View
 import android.widget.*
 import com.example.omemorizador.R
 import com.example.omemorizador.model.GridTeachersAdapter
+import com.example.omemorizador.model.Recorde
 import com.example.omemorizador.model.Teacher
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_tabuleiro.*
+import android.text.InputType
+import android.widget.EditText
+
+
 
 class TabuleiroActivity : AppCompatActivity() {
 
@@ -25,11 +35,15 @@ class TabuleiroActivity : AppCompatActivity() {
     private var posicoesAcertadas: ArrayList<Int> = ArrayList()
     private val fotoDefault = "https://res.cloudinary.com/deqmrmqui/image/upload/v1558056566/icognita_rvba83.jpg"
     private lateinit var cronometro: Chronometer
+    private lateinit var alerta: AlertDialog
     private var milisegundos: Long = 0
+    private lateinit var nome: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tabuleiro)
+
+        abrirDialog()
 
         this.gvTabuleiro = findViewById(R.id.gvTabuleiro)
 
@@ -48,7 +62,7 @@ class TabuleiroActivity : AppCompatActivity() {
 
     }
 
-    inner class OnClickLista : AdapterView.OnItemClickListener{
+    inner class OnClickLista : AdapterView.OnItemClickListener {
         override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             var teacher: Teacher
             view as ImageView
@@ -64,7 +78,7 @@ class TabuleiroActivity : AppCompatActivity() {
                                 carregarFoto(this@TabuleiroActivity, fotoDefault, view)
                             imageViewEscolhida.removeAll(imageViewEscolhida)
                         }
-                            imageViewEscolhida.removeAll(imageViewEscolhida)
+                        imageViewEscolhida.removeAll(imageViewEscolhida)
                         escolha = teachers.get(position)
                         numeroEscolhido = position
                         imageViewEscolhida.add(view)
@@ -74,24 +88,24 @@ class TabuleiroActivity : AppCompatActivity() {
                     } else {
                         teacher = teachers.get(position)
                         if (escolha.url.equals(teacher.url) && position != numeroEscolhido) {
-                            Log.i("APP_API", "MATCH")
-                            Toast.makeText(this@TabuleiroActivity, "MATCH", Toast.LENGTH_SHORT)
                             carregarFoto(this@TabuleiroActivity, escolha.foto, view)
                             posicoesAcertadas.add(numeroEscolhido)
                             posicoesAcertadas.add(position)
-                            ++ acertos
+                            ++acertos
                             if (acertos == 8) {
                                 cronometro.stop()
-                                Log.i("APP_API", (SystemClock.elapsedRealtime() - milisegundos).toString())
+                                val tempo = ((SystemClock.elapsedRealtime() - milisegundos) / 1000).toInt()
+                                val recorde = Recorde(nome, tempo)
+                                var intent = Intent()
+                                intent.putExtra("recorde", recorde)
+                                setResult(Activity.RESULT_OK, intent)
                                 finish()
                             }
                         } else {
-                            Log.i("APP_API", "NOT MATCH")
-                            Toast.makeText(this@TabuleiroActivity, "NOT MATCH", Toast.LENGTH_SHORT)
                             carregarFoto(this@TabuleiroActivity, teacher.foto, view)
                             imageViewEscolhida.add(view)
                         }
-                    numeroEscolhido = -1
+                        numeroEscolhido = -1
                     }
                 } else {
                     Toast.makeText(this@TabuleiroActivity, "Escolha uma carta diferente!", Toast.LENGTH_SHORT).show()
@@ -99,7 +113,6 @@ class TabuleiroActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this@TabuleiroActivity, "Escolha uma carta diferente!", Toast.LENGTH_SHORT).show()
             }
-            Log.i("APP_API", acertos.toString())
 
         }
 
@@ -108,5 +121,38 @@ class TabuleiroActivity : AppCompatActivity() {
                 .load(url)
                 .into(imageView)
         }
+    }
+
+    fun abrirDialog() {
+        // Initialize a new instance of
+        val builder = AlertDialog.Builder(this)
+
+        // Set the alert dialog title
+        builder.setTitle("O Memorizador")
+
+        // Display a message on alert dialog
+        builder.setMessage("Digite seu nome:")
+        val input = EditText(this)
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        // Set a positive button and its click listener on alert dialog
+        builder.setPositiveButton("Confirm") { dialog, which ->
+            // Do something when user press the positive button
+            this.nome = input.text.toString()
+        }
+
+
+        // Display a neutral button on alert dialog
+        builder.setNeutralButton("Cancel") { _, _ ->
+            this.nome = "Fulano"
+        }
+
+        // Finally, make the alert dialog using builder
+        val dialog: AlertDialog = builder.create()
+
+        // Display the alert dialog on app interface
+        dialog.show()
     }
 }

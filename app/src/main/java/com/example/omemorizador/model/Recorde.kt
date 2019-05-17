@@ -1,6 +1,8 @@
 package com.example.omemorizador.model
 
-class Recorde {
+import java.io.Serializable
+
+class Recorde: Serializable {
 
     var id: Int
     var nome: String
